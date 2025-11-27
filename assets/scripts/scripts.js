@@ -74,6 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Verificar se o contexto é seguro (HTTPS ou localhost)
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            alert("A geolocalização requer um contexto seguro (HTTPS). Execute o projeto em um servidor local ou use HTTPS.");
+            callback(false);
+            return;
+        }
+
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 const userLat = pos.coords.latitude;
@@ -93,8 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     callback(false);
                 }
             },
-            () => {
-                alert("Não foi possível obter sua localização.");
+            (error) => {
+                console.error("Erro na geolocalização:", error);
+                alert("Não foi possível obter sua localização. Verifique as permissões do navegador.");
                 callback(false);
             }
         );
@@ -168,8 +176,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
             card.addEventListener("mousemove", (e) => {
                 hoverModal.style.opacity = "1";
-                hoverModal.style.left = e.pageX + 15 + "px";
-                hoverModal.style.top = e.pageY + 15 + "px";
+
+                // Calcular posição do modal, garantindo que não saia da tela
+                const modalWidth = hoverModal.offsetWidth;
+                const modalHeight = hoverModal.offsetHeight;
+                let left = e.pageX + 15;
+                let top = e.pageY + 15;
+
+                // Ajustar se sair pela direita
+                if (left + modalWidth > window.innerWidth) {
+                    left = window.innerWidth - modalWidth - 10;
+                }
+
+                // Ajustar se sair pela esquerda
+                if (left < 10) {
+                    left = 10;
+                }
+
+                // Ajustar se sair por baixo
+                if (top + modalHeight > window.innerHeight) {
+                    top = window.innerHeight - modalHeight - 10;
+                }
+
+                // Ajustar se sair por cima
+                if (top < 10) {
+                    top = 10;
+                }
+
+                hoverModal.style.left = left + "px";
+                hoverModal.style.top = top + "px";
 
                 document.getElementById("hoverImg").src = point.imagem;
                 document.getElementById("hoverTitle").textContent = point.nome;
