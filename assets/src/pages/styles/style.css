@@ -22,7 +22,6 @@ header {
     opacity: 0.8;
 }
 
-/* Container */
 .container {
     width: 90%;
     max-width: 900px;
@@ -30,7 +29,6 @@ header {
     padding-top: 20px;
 }
 
-/* Cards */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -49,14 +47,6 @@ header {
     transform: translateY(-4px);
 }
 
-.card h3 {
-    margin-bottom: 10px;
-}
-
-.card small {
-    color: #666;
-}
-
 button {
     margin-top: 15px;
     background: #2a5298;
@@ -67,25 +57,64 @@ button {
     cursor: pointer;
     transition: 0.3s;
 }
-
 button:hover {
     background: #1e3c72;
 }
 
-/* Roadmap */
-.roadmap {
+/* Timeline estilo Google Agenda */
+.timeline {
+    border-left: 3px solid #2a5298;
     margin-top: 20px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 14px;
-    min-height: 100px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding-left: 20px;
 }
 
-.roadmap-step {
-    background: #e8efff;
-    padding: 12px 16px;
-    margin-bottom: 10px;
-    border-left: 4px solid #2a5298;
+.timeline-item {
+    background: #fff;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    position: relative;
+}
+
+.timeline-item::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    background: #2a5298;
+    border-radius: 50%;
+    position: absolute;
+    left: -28px;
+    top: 18px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-content input {
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #aaa;
 }

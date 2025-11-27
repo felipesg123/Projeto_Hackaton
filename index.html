@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turismo Inteligente Londrina - MVP</title>
+    <title>Turismo Inteligente Londrina</title>
     <link rel="stylesheet" href="/assets/src/pages/styles/style.css">
 </head>
 <body>
@@ -15,7 +15,6 @@
 
 <section class="container">
 
-    <!-- Filtros -->
     <div class="filters">
         <h2>Filtrar por interesse</h2>
         <select id="interestFilter">
@@ -27,17 +26,36 @@
         </select>
     </div>
 
-    <!-- Lista de Pontos Turísticos -->
     <h2>Pontos Turísticos da Zona Norte</h2>
     <div id="pointsList" class="grid"></div>
 
     <hr>
 
-    <!-- Trilha do Usuário -->
     <h2>Sua Trilha Personalizada</h2>
-    <div id="roadmap" class="roadmap"></div>
+    <div id="roadmap" class="timeline"></div>
 
 </section>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3>Adicionar à Trilha</h3>
+
+        <label>Duração do passeio (minutos)</label>
+        <input type="number" id="modalDuration">
+
+        <label>Dia da visita</label>
+        <input type="date" id="modalDate">
+
+        <label>Horário</label>
+        <input type="time" id="modalTime">
+
+        <div class="modal-actions">
+            <button id="modalCancel">Cancelar</button>
+            <button id="modalConfirm">Adicionar</button>
+        </div>
+    </div>
+</div>
 
 <script src="/assets/src/pages/scripts/scripts.js"></script>
 </body>
