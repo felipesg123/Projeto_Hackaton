@@ -4,39 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turismo Inteligente Londrina</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <link rel="stylesheet" href="/assets/src/pages/styles/style.css">
 </head>
 <body>
 
 <header>
     <h1>Turismo Inteligente Londrina</h1>
-    <p class="subtitle">Monte seu roteiro personalizado na Zona Norte</p>
+    <p class="subtitle">Monte seu roteiro personalizado</p>
 </header>
 
-<section class="container">
+<section id="app">
 
-    <div class="filters">
-        <h2>Filtrar por interesse</h2>
-        <select id="interestFilter">
-            <option value="todos">Todos</option>
-            <option value="natureza">Natureza</option>
-            <option value="cultura">Cultura</option>
-            <option value="família">Família</option>
-            <option value="aventura">Aventura</option>
-        </select>
-    </div>
-
-    <h2>Pontos Turísticos da Zona Norte</h2>
-    <div id="pointsList" class="grid"></div>
+    <h2>Pontos Turísticos</h2>
+    <div id="locais-list"></div>
 
     <hr>
 
-    <h2>Sua Trilha Personalizada</h2>
+    <h2>Sua Trilha</h2>
     <div id="roadmap" class="timeline"></div>
 
 </section>
 
-<!-- Modal -->
+<!-- Modal flutuante sutil -->
+<div id="hoverModal" class="hover-modal">
+    <img id="hoverImg" class="hover-img" />
+    <h3 id="hoverTitle"></h3>
+    <p id="hoverDesc"></p>
+
+    <!-- MAPA -->
+    <div id="hoverMap"></div>
+</div>
+
+<!-- Modal de adicionar à trilha -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <h3>Adicionar à Trilha</h3>
@@ -46,6 +50,7 @@
 
         <label>Dia da visita</label>
         <input type="date" id="modalDate">
+        <small id="dateWarning" class="warning"></small>
 
         <label>Horário</label>
         <input type="time" id="modalTime">
