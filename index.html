@@ -1,14 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turismo Inteligente Londrina - MVP</title>
+    <link rel="stylesheet" href="/assets/src/pages/styles/style.css">
 </head>
 <body>
-    
+
+<header>
+    <h1>Turismo Inteligente Londrina</h1>
+    <p class="subtitle">Monte seu roteiro personalizado na Zona Norte</p>
+</header>
+
+<section class="container">
+
+    <!-- Filtros -->
+    <div class="filters">
+        <h2>Filtrar por interesse</h2>
+        <select id="interestFilter">
+            <option value="todos">Todos</option>
+            <option value="natureza">Natureza</option>
+            <option value="cultura">Cultura</option>
+            <option value="família">Família</option>
+            <option value="aventura">Aventura</option>
+        </select>
+    </div>
+
+    <!-- Lista de Pontos Turísticos -->
+    <h2>Pontos Turísticos da Zona Norte</h2>
+    <div id="pointsList" class="grid"></div>
+
+    <hr>
+
+    <!-- Trilha do Usuário -->
+    <h2>Sua Trilha Personalizada</h2>
+    <div id="roadmap" class="roadmap"></div>
+
+</section>
+
+<script src="/assets/src/pages/scripts/scripts.js"></script>
 </body>
 </html>
