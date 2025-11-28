@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Função para abrir o painel
     function openPanel() {
         panelOpen = true;
-        previewImage.src = "/public/images/norte.png";
+        previewImage.src = "../public/images/norte.png";
 
         if (isMobile) {
             // No mobile, usa height e bottom sheet
