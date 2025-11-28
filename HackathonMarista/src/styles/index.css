@@ -1,0 +1,685 @@
+@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+
+:root {
+    --BG: #f3f0d1;
+    --primari: #A20E0E;
+    --secundari: #C85108;
+    --terceari: #E29C68;
+    --font-primary: Helvetica;
+}
+
+body {
+    background-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Container do vídeo */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(8px);
+    /* Desfoque aplicado no vídeo */
+}
+
+/* Overlay para melhor contraste */
+.video-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(34, 25, 13, 0.589);
+    /* Overlay escuro para melhor legibilidade */
+    z-index: 0;
+}
+
+
+.tittle h1 {
+    position: absolute;
+    left: 10vh;
+    top: 20vh;
+    font-family: "Titan One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12vh;
+    color: var(--BG);
+    opacity: 0.6;
+
+}
+
+.tittle img {
+    position: absolute;
+    left: 10vh;
+    top: 70vh;
+
+}
+
+.tittle h2 {
+    position: absolute;
+    left: 10vh;
+    top: 30vh;
+    font-family: "Titan One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12vh;
+    color: var(--BG);
+    opacity: 0.6;
+}
+
+.tittle h3 {
+    position: absolute;
+    left: 10vh;
+    top: 40vh;
+    font-family: "Titan One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12vh;
+    color: var(--BG);
+    opacity: 0.6;
+}
+
+/* Conteúdo por cima */
+.conteudo {
+    position: relative;
+    z-index: 1;
+    color: white;
+    text-align: center;
+    margin-top: 40vh;
+    font-family: sans-serif;
+}
+
+.screen {
+    display: flex;
+    height: 100vh;
+    position: relative;
+}
+
+.left-panel {
+    width: 0;
+    background: var(--terceari);
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    /* Efeito diagonal aumentado */
+    transform: skewX(-8deg);
+    transform-origin: top left;
+    margin-left: -20px;
+    transition: transform 0.3s ease;
+}
+
+/* Quando aberto, aumenta para 45vw */
+.left-panel[style*="width: 45vw"] {
+    transform: skewX(-8deg) translateX(20px);
+}
+
+.left-panel .historia {
+    color: var(--BG);
+    text-align: justify;
+    width: 80%;
+    padding: 0 0 0 30px;
+}
+
+.left-panel .historia b {
+    color: var(--primari);
+}
+
+.left-panel-content {
+    transform: skewX(8deg);
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.left-panel h2 {
+    position: absolute;
+    z-index: 1;
+    color: var(--BG);
+    font-family: "Titan One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14vh;
+    top: 5vh;
+    right: 20vh;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.349);
+}
+
+.left-panel h3 {
+    position: absolute;
+    z-index: -1;
+    color: var(--BG);
+    font-family: "Titan One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 10vh;
+    top: 10.5vh;
+    right: 13vh;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.349);
+}
+
+.left-panel img {
+    position: relative;
+    width: 75%;
+    /* Aumentado um pouco */
+    right: 30px;
+    opacity: 0;
+    transform: skewX(8deg);
+    border-radius: 10px;
+    /* REMOVIDO: box-shadow: 0 5px 15px rgba(0,0,0,0.2); */
+    /* REMOVIDO qualquer borda ou fundo */
+    border: none;
+    background: transparent;
+    outline: none;
+}
+
+.left-panel p {
+    transform: skewX(8deg);
+    color: var(--primari);
+    font-size: 1.2rem;
+    /* Aumentado um pouco */
+    margin: 25px 0;
+    /* Aumentado o espaçamento */
+    line-height: 1.6;
+    font-weight: bold;
+    text-align: center;
+}
+
+.left-panel .btn-container {
+    transform: skewX(8deg);
+    margin-top: 25px;
+    /* Aumentado o espaçamento */
+}
+
+.map-container {
+    position: relative;
+    flex: 1;
+    transition: all 0.4s ease-in-out;
+}
+
+/* Quando o painel está aberto, move o mapa um pouco mais */
+.left-panel[style*="width: 45vw"]~.map-container {
+    transform: translateX(10%) scale(0.95);
+}
+
+.mapa {
+    position: relative;
+    display: grid;
+    grid-template-areas:
+        ". norte ."
+        "oeste centro leste"
+        ". sul .";
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    width: 60vh;
+    height: 65vh;
+    gap: 10px;
+    margin: 0 auto;
+    padding: 20px 0 0 10px;
+    top: 13vh;
+    background-color: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.regiao {
+    display: flex;
+    font-family: "Titan One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px;
+    background: transparent !important;
+    border: none !important;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.centro {
+    color: var(--terceari);
+}
+
+.norte {
+    color: var(--BG);
+}
+
+.oeste {
+    color: var(--BG);
+}
+
+.leste {
+    color: var(--BG);
+}
+
+.sul {
+    color: var(--terceari);
+}
+
+.norte {
+    grid-area: norte;
+}
+
+.sul {
+    grid-area: sul;
+}
+
+.leste {
+    grid-area: leste;
+}
+
+.oeste {
+    grid-area: oeste;
+}
+
+.centro {
+    grid-area: centro;
+}
+
+.map-base {
+    position: absolute;
+    z-index: 1;
+    top: 20px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: all 0.6s ease;
+}
+
+.hitbox {
+    position: absolute;
+    cursor: pointer;
+    top: 8%;
+    left: 35%;
+    width: 30%;
+    height: 20%;
+    background: rgba(255, 0, 0, 0.0);
+    z-index: 3;
+    transition: all 0.3s ease;
+}
+
+/* REMOVIDO o hover da hitbox */
+.hitbox:hover {
+    background: rgba(255, 0, 0, 0.0);
+    /* Mantém transparente */
+}
+
+.tittle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* BOTÃO COM CORES INVERTIDAS */
+.pushable {
+    position: relative;
+    background: transparent;
+    bottom: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    border: none;
+    cursor: pointer;
+    outline-offset: 4px;
+    outline-color: var(--secundari);
+    transition: filter 250ms;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    transform: skewX(8deg);
+}
+
+.shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: var(--secundari);
+    border-radius: 8px;
+    filter: blur(2px);
+    will-change: transform;
+    transform: translateY(2px);
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.edge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    background: linear-gradient(to right,
+            hsl(25, 85%, 30%) 0%,
+            var(--secundari) 8%,
+            hsl(25, 85%, 35%) 92%,
+            hsl(25, 85%, 25%) 100%);
+}
+
+.front {
+    display: block;
+    position: relative;
+    border-radius: 8px;
+    background: var(--primari);
+    padding: 16px 32px;
+    color: var(--BG);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 1rem;
+    transform: translateY(-4px);
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.pushable:hover {
+    filter: brightness(110%);
+}
+
+.pushable:hover .front {
+    transform: translateY(-6px);
+    transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .front {
+    transform: translateY(-2px);
+    transition: transform 34ms;
+}
+
+.pushable:hover .shadow {
+    transform: translateY(4px);
+    transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .shadow {
+    transform: translateY(1px);
+    transition: transform 34ms;
+}
+
+.pushable:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Remove qualquer overlay ou borda extra */
+.left-panel[style*="width: 45vw"]~.map-container::before {
+    content: none;
+    /* REMOVIDO o overlay */
+}
+
+
+/* Adicione estas regras ao seu CSS existente */
+
+/* Header Mobile */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(34, 25, 13, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-logo {
+    height: 40px;
+    width: auto;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--BG);
+    transition: 0.3s;
+}
+
+/* Botão fechar painel mobile */
+.close-panel {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: var(--BG);
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 1024px) {
+    .tittle h1,
+    .tittle h2,
+    .tittle h3 {
+        left: 5vh;
+        font-size: 8vh;
+    }
+    
+    .tittle .desktop-logo {
+        left: 5vh;
+        width: 400px;
+    }
+    
+    .left-panel {
+        width: 0;
+        transform: skewX(-5deg);
+    }
+    
+    .left-panel[style*="width: 45vw"] {
+        width: 50vw !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-header {
+        display: block;
+    }
+    
+    .tittle {
+        position: relative;
+        padding-top: 80px;
+        text-align: center;
+        flex-direction: column;
+    }
+    
+    .tittle h1,
+    .tittle h2,
+    .tittle h3 {
+        position: static;
+        font-size: 6vh;
+        margin: 5px 0;
+    }
+    
+    .tittle .desktop-logo {
+        display: none;
+    }
+    
+    .screen {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        padding-top: 20px;
+    }
+    
+    /* Painel lateral vira bottom sheet no mobile */
+    .left-panel.mobile-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        transform: none;
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+        z-index: 999;
+        transition: height 0.4s ease-in-out;
+        overflow-y: auto;
+    }
+    
+    .left-panel.mobile-panel.active {
+        height: 70vh;
+    }
+    
+    .close-panel {
+        display: block;
+    }
+    
+    .left-panel-content {
+        transform: none;
+        padding: 40px 20px 20px;
+    }
+    
+    .left-panel h2,
+    .left-panel h3 {
+        position: relative;
+        top: auto;
+        right: auto;
+        text-align: center;
+        margin: 10px 0;
+    }
+    
+    .left-panel h2 {
+        font-size: 8vh;
+    }
+    
+    .left-panel h3 {
+        font-size: 6vh;
+    }
+    
+    .left-panel img {
+        transform: none;
+        right: 0;
+        width: 85%;
+        margin: 10px 0;
+    }
+    
+    .left-panel .historia {
+        padding: 0 20px;
+        transform: none;
+        font-size: 1rem;
+    }
+    
+    .map-container {
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+    
+    .mapa {
+        width: 100%;
+        height: 50vh;
+        max-width: 400px;
+        padding: 0;
+        top: 0;
+    }
+    
+    .pushable {
+        transform: none;
+        margin: 20px 0;
+    }
+    
+    /* Remove transformações do mapa no mobile */
+    .left-panel[style*="width: 45vw"] ~ .map-container,
+    .left-panel.active ~ .map-container {
+        transform: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .tittle h1,
+    .tittle h2,
+    .tittle h3 {
+        font-size: 4vh;
+    }
+    
+    .mobile-logo {
+        height: 30px;
+    }
+    
+    .mapa {
+        height: 40vh;
+    }
+    
+    .regiao {
+        font-size: 16px;
+        padding: 5px;
+    }
+    
+    .left-panel.mobile-panel.active {
+        height: 80vh;
+    }
+    
+    .left-panel h2 {
+        font-size: 6vh;
+    }
+    
+    .left-panel h3 {
+        font-size: 4vh;
+    }
+}
+
+/* Ajustes para telas muito grandes */
+@media (min-width: 1600px) {
+    .tittle h1,
+    .tittle h2,
+    .tittle h3 {
+        font-size: 15vh;
+    }
+    
+    .tittle .desktop-logo {
+        width: 600px;
+    }
+    
+    .mapa {
+        width: 80vh;
+        height: 75vh;
+    }
+}
+
+/* Garantir que o vídeo de fundo funcione em todos os dispositivos */
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
