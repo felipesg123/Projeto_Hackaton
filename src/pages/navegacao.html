@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubra Londrina - Navegação</title>
+
+    <style>
+        :root{
+            --BG: #f3f0d1;
+            --primari: #A20E0E;
+            --secundari: #C85108;
+            --terceari: #E29C68;
+            --font-primary:Helvetica;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+
+        .status-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primari);
+            color: var(--BG);
+            padding: 15px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-family: Arial;
+            font-size: 1rem;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .status-box .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .status-box .header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .route-progress {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .status-box .title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .progress-container {
+            margin-top: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--BG);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        /* REORGANIZAÇÃO: Route info panel movido para a direita */
+        .route-info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px; /* Mudado para direita */
+            background: var(--BG);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-family: Arial;
+            max-width: 280px;
+        }
+
+        .route-info-panel h3 {
+            margin: 0 0 10px 0;
+            color: var(--primari);
+            font-size: 1.1rem;
+        }
+
+        .route-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--primari);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .bonus-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #856404;
+            text-align: center;
+        }
+
+        /* REORGANIZAÇÃO: Controles principais na esquerda */
+        .main-controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        /* Controles de rota - agora parte dos controles principais */
+        .route-controls {
+            background: var(--BG);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 160px;
+        }
+
+        .route-controls button {
+            background: var(--primari);
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .route-controls button:hover {
+            background: var(--secundari);
+        }
+
+        /* Controles de navegação */
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            background: var(--BG);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        }
+
+        .control-btn {
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 2000;
+            display: none;
+        }
+
+        .completion-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 2000;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            display: none;
+        }
+
+        .completion-modal h2 {
+            color: var(--primari);
+            margin-bottom: 15px;
+        }
+
+        .rewards {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .reward-item {
+            text-align: center;
+        }
+
+        .reward-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .completion-modal button {
+            background: var(--primari);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1999;
+            display: none;
+        }
+
+        /* Indicador de rota ativa */
+        .route-active {
+            border-left: 4px solid var(--primari);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .main-controls {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .route-controls {
+                flex: 1;
+                min-width: auto;
+            }
+            
+            .nav-controls {
+                flex: 1;
+                justify-content: space-around;
+            }
+            
+            .route-info-panel {
+                top: auto;
+                bottom: 80px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!-- REORGANIZADO: Todos os controles na esquerda -->
+    <div class="main-controls">
+        <!-- Controles de rota -->
+        <div class="route-controls" id="routeControls">
+            <button id="btnRouteNext">📍 Rota para Próximo</button>
+            <button id="btnRouteAll">🔄 Rota Completa</button>
+            <button id="btnClearRoutes">❌ Limpar Rotas</button>
+        </div>
+
+        <!-- Controles de navegação -->
+        <div class="nav-controls">
+            <button class="control-btn" id="btnMyLocation" title="Minha localização">📍</button>
+            <button class="control-btn" id="btnRouteView" title="Ver todos os pontos">👁️</button>
+            <button class="control-btn" id="btnNextPoint" title="Próximo ponto">➡️</button>
+        </div>
+    </div>
+
+    <!-- Painel de informações da rota - agora na direita -->
+    <div class="route-info-panel" id="routeInfo">
+        <h3 id="routeName">Carregando rota...</h3>
+        <div class="route-stats">
+            <div class="stat">
+                <div class="stat-value" id="statProgress">0%</div>
+                <div class="stat-label">Concluído</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statPoints">0/0</div>
+                <div class="stat-label">Pontos</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statDistance">-- km</div>
+                <div class="stat-label">Distância</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="statTime">--</div>
+                <div class="stat-label">Tempo</div>
+            </div>
+        </div>
+        <div class="bonus-notice">
+            🎁 Complete a rota para desbloquear recompensas!
+        </div>
+    </div>
+
+    <!-- Status Box -->
+    <div class="status-box" id="statusBox">
+        <div class="header">
+            <h3>Navegando: <span id="currentRouteName">-</span></h3>
+            <div class="route-progress" id="routeProgress">0/0 pontos</div>
+        </div>
+        <div class="title">Próximo destino:</div>
+        <div id="destinoAtual">Carregando...</div>
+        <small id="distanciaAtual"></small>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Modal de conclusão -->
+    <div class="overlay" id="overlay"></div>
+    <div class="completion-modal" id="completionModal">
+        <h2>🎉 Rota Concluída! 🎉</h2>
+        <p>Parabéns! Você completou <span id="completedRouteName"></span> com sucesso!</p>
+        <div class="rewards">
+            <div class="reward-item">
+                <div class="reward-icon">🏆</div>
+                <div>Trofeu Virtual</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">📸</div>
+                <div>Foto Exclusiva</div>
+            </div>
+        </div>
+        <p>Mostre esta tela para resgatar descontos especiais!</p>
+        <button id="btnCloseModal">Continuar Explorando</button>
+    </div>
+
+    <div class="loading-indicator" id="loadingIndicator">
+        Calculando rota...
+    </div>
+
+    <script>
+        // Carregar rota selecionada
+        const rotaSelecionada = JSON.parse(localStorage.getItem("rotaSelecionada"));
+        
+        // CORREÇÃO DAS COORDENADAS - Locais reais da Zona Norte de Londrina
+        const locais = rotaSelecionada ? rotaSelecionada.locais : [
+            { 
+                nome: "Lago do Cabrina", 
+                descricao: "Cartão postal de Londrina, ótimo para caminhadas.", 
+                lat: -23.269128522844692,
+                lng: -51.1487427778922
+            },
+            { 
+                nome: "Sorvete Italiano ZN", 
+                descricao: "Os melhores sorvetes artesanais da cidade.", 
+                lat: -23.258567511423728,
+                lng: -51.14835159087403
+            },
+            { 
+                nome: "Centro Cultural Lupércio Luppi", 
+                descricao: "Exposições e eventos culturais diversos.", 
+                lat: -23.258247188716833,
+                lng: -51.14500494963125
+            },
+            { 
+                nome: "Delika", 
+                descricao: "Culinária contemporânea em ambiente sofisticado.", 
+                lat: -23.259513800830575,
+                lng: -51.145391187723135
+            },
+            { 
+                nome: "Senac Londrina Norte", 
+                descricao: "Centro de educação profissional.", 
+                lat: -23.25857887708181,
+                lng: -51.15400830473639
+            },
+            { 
+                nome: "Praça Maria Cecília", 
+                descricao: "Complexo esportivo e de lazer.", 
+                lat: -23.257775141618684,
+                lng: -51.15039462781915
+            },
+            { 
+                nome: "AP5 Skate Plaza", 
+                descricao: "Patrimônio da cultura urbana.", 
+                lat: -23.2557659220791,
+                lng: -51.15381113054292
+            },
+            { 
+                nome: "Padaria Lindo Pão", 
+                descricao: "Tradicional padaria do bairro.", 
+                lat: -23.254086778217832,
+                lng: -51.147933642194324
+            },
+            { 
+                nome: "Paróquia Santa Cruz", 
+                descricao: "Comunidade de fé e espaço comunitário.", 
+                lat: -23.253762291535566,
+                lng: -51.14205788982603
+            }
+        ];
+
+        let atual = 0;
+        let concluidos = [];
+        let userLat = null;
+        let userLng = null;
+        let currentRoute = null;
+        let isRouteActive = false;
+
+        // Elementos da interface
+        const statusBox = document.getElementById("statusBox");
+        const destinoAtualEl = document.getElementById("destinoAtual");
+        const distanciaAtualEl = document.getElementById("distanciaAtual");
+        const progressBar = document.getElementById("progressBar");
+        const routeNameEl = document.getElementById("routeName");
+        const currentRouteNameEl = document.getElementById("currentRouteName");
+        const routeProgressEl = document.getElementById("routeProgress");
+        const statProgressEl = document.getElementById("statProgress");
+        const statPointsEl = document.getElementById("statPoints");
+        const statDistanceEl = document.getElementById("statDistance");
+        const statTimeEl = document.getElementById("statTime");
+        const completedRouteNameEl = document.getElementById("completedRouteName");
+        const completionModal = document.getElementById("completionModal");
+        const overlay = document.getElementById("overlay");
+        const btnCloseModal = document.getElementById("btnCloseModal");
+        const btnMyLocation = document.getElementById("btnMyLocation");
+        const btnRouteView = document.getElementById("btnRouteView");
+        const btnNextPoint = document.getElementById("btnNextPoint");
+        const btnRouteNext = document.getElementById("btnRouteNext");
+        const btnRouteAll = document.getElementById("btnRouteAll");
+        const btnClearRoutes = document.getElementById("btnClearRoutes");
+        const loadingIndicator = document.getElementById("loadingIndicator");
+        const routeControls = document.getElementById("routeControls");
+
+        // Inicializar informações da rota
+        if (rotaSelecionada) {
+            routeNameEl.textContent = rotaSelecionada.nome;
+            currentRouteNameEl.textContent = rotaSelecionada.nome;
+            statDistanceEl.textContent = rotaSelecionada.distancia;
+            statTimeEl.textContent = rotaSelecionada.duracao;
+            completedRouteNameEl.textContent = rotaSelecionada.nome;
+        } else {
+            routeNameEl.textContent = "Rota Zona Norte";
+            currentRouteNameEl.textContent = "Zona Norte";
+            statDistanceEl.textContent = "4.5 km";
+            statTimeEl.textContent = "3-4 horas";
+            completedRouteNameEl.textContent = "Rota Zona Norte";
+        }
+
+        // Criar mapa - View corrigida para Zona Norte de Londrina
+        const map = L.map('map').setView([-23.304, -51.165], 15);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Ícones
+        const iconDestino = L.icon({
+            iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+            iconSize: [35, 35]
+        });
+
+        const iconConcluido = L.icon({
+            iconUrl: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
+            iconSize: [30, 30]
+        });
+
+        const iconUser = L.icon({
+            iconUrl: "https://cdn-icons-png.flaticon.com/512/428/428933.png",
+            iconSize: [40, 40]
+        });
+
+        // Criar marcadores
+        let markers = locais.map((loc, index) => {
+            return L.marker([loc.lat, loc.lng], { 
+                icon: iconDestino 
+            })
+            .addTo(map)
+            .bindPopup(`<b>${loc.nome}</b><br>${loc.descricao}<br><small>Ponto ${index + 1} de ${locais.length}</small>`);
+        });
+
+        // ------------------------------
+        // FUNÇÕES DE ROTEAMENTO
+        // ------------------------------
+        async function calcularRotaOSRM(pontos) {
+            if (pontos.length < 2) return null;
+            
+            const coordinates = pontos.map(p => `${p[1]},${p[0]}`).join(';');
+            const url = `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson`;
+            
+            try {
+                loadingIndicator.style.display = 'block';
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.routes && data.routes.length > 0) {
+                    return data.routes[0];
+                }
+                return null;
+            } catch (error) {
+                console.error('Erro ao calcular rota:', error);
+                return null;
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        function desenharRota(rotaData) {
+            if (currentRoute) {
+                map.removeLayer(currentRoute);
+            }
+            
+            if (rotaData && rotaData.geometry) {
+                const routeCoordinates = rotaData.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                
+                currentRoute = L.polyline(routeCoordinates, {
+                    color: '#A20E0E',
+                    weight: 6,
+                    opacity: 0.7,
+                    lineJoin: 'round'
+                }).addTo(map);
+                
+                map.fitBounds(currentRoute.getBounds());
+                
+                // Indicar que rota está ativa
+                isRouteActive = true;
+                routeControls.classList.add('route-active');
+                
+                return rotaData.distance;
+            }
+            return null;
+        }
+
+        async function calcularRotaProximoPonto() {
+            if (!userLat || !userLng || atual >= locais.length) return;
+            
+            const destino = locais[atual];
+            const pontos = [
+                [userLat, userLng],
+                [destino.lat, destino.lng]
+            ];
+            
+            const rota = await calcularRotaOSRM(pontos);
+            if (rota) {
+                const distancia = rota.distance;
+                desenharRota(rota);
+                return distancia;
+            }
+            return null;
+        }
+
+        async function calcularRotaCompleta() {
+            if (!userLat || !userLng || locais.length === 0) return;
+            
+            const pontos = [[userLat, userLng]];
+            locais.forEach(local => {
+                pontos.push([local.lat, local.lng]);
+            });
+            
+            const rota = await calcularRotaOSRM(pontos);
+            if (rota) {
+                const distanciaTotal = (rota.distance / 1000).toFixed(1);
+                desenharRota(rota);
+                
+                // Atualizar estatísticas com a distância real calculada
+                statDistanceEl.textContent = `${distanciaTotal} km`;
+                
+                return rota.distance;
+            }
+            return null;
+        }
+
+        function limparRotas() {
+            if (currentRoute) {
+                map.removeLayer(currentRoute);
+                currentRoute = null;
+            }
+            isRouteActive = false;
+            routeControls.classList.remove('route-active');
+        }
+
+        // ------------------------------
+        // FUNÇÕES DE PROGRESSO E NAVEGAÇÃO
+        // ------------------------------
+        function atualizarProgresso() {
+            const progresso = (concluidos.length / locais.length) * 100;
+            progressBar.style.width = `${progresso}%`;
+            routeProgressEl.textContent = `${concluidos.length}/${locais.length} pontos`;
+            statProgressEl.textContent = `${Math.round(progresso)}%`;
+            statPointsEl.textContent = `${concluidos.length}/${locais.length}`;
+        }
+
+        function atualizarDestino() {
+            if (atual >= locais.length) {
+                destinoAtualEl.textContent = "Rota concluída! 🎉";
+                distanciaAtualEl.textContent = "";
+                
+                setTimeout(() => {
+                    completionModal.style.display = 'block';
+                    overlay.style.display = 'block';
+                    gsap.fromTo(completionModal, 
+                        { scale: 0, opacity: 0 }, 
+                        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+                    );
+                }, 1000);
+                return;
+            }
+
+            destinoAtualEl.textContent = locais[atual].nome;
+        }
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI/180;
+            const dLon = (lon2 - lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))) * 1000;
+        }
+
+        // ------------------------------
+        // EVENT LISTENERS
+        // ------------------------------
+        btnCloseModal.addEventListener('click', () => {
+            completionModal.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        btnMyLocation.addEventListener('click', () => {
+            if (userLat && userLng) {
+                map.setView([userLat, userLng], 16);
+            }
+        });
+
+        btnRouteView.addEventListener('click', () => {
+            if (locais.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        });
+
+        btnNextPoint.addEventListener('click', () => {
+            if (atual < locais.length) {
+                const destino = locais[atual];
+                map.setView([destino.lat, destino.lng], 16);
+                markers[atual].openPopup();
+            }
+        });
+
+        btnRouteNext.addEventListener('click', () => {
+            calcularRotaProximoPonto();
+        });
+
+        btnRouteAll.addEventListener('click', () => {
+            calcularRotaCompleta();
+        });
+
+        btnClearRoutes.addEventListener('click', () => {
+            limparRotas();
+        });
+
+        // ------------------------------
+        // RASTREAMENTO DO USUÁRIO - COM CORREÇÕES
+        // ------------------------------
+        let userMarker = null;
+        
+        function initGeolocation() {
+            if (!navigator.geolocation) {
+                alert("Seu navegador não suporta geolocalização.");
+                return;
+            }
+
+            // Primeiro obtém a localização atual
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
+                    
+                    // Centralizar mapa na localização do usuário
+                    map.setView([userLat, userLng], 16);
+                    
+                    // Adicionar marcador do usuário
+                    if (!userMarker) {
+                        userMarker = L.marker([userLat, userLng], { 
+                            icon: iconUser 
+                        }).addTo(map)
+                        .bindPopup("<b>Sua localização</b>")
+                        .openPopup();
+                    }
+
+                    // NOVO: Calcular rota completa automaticamente ao iniciar
+                    setTimeout(() => {
+                        calcularRotaCompleta();
+                    }, 1000);
+                },
+                (error) => {
+                    console.warn("Erro ao obter localização:", error);
+                    // Usar coordenadas padrão da Zona Norte de Londrina
+                    userLat = -23.304;
+                    userLng = -51.165;
+                    
+                    // NOVO: Calcular rota completa mesmo sem localização do usuário
+                    setTimeout(() => {
+                        calcularRotaCompleta();
+                    }, 1000);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+
+            // Iniciar watchPosition para atualizações contínuas
+            navigator.geolocation.watchPosition(
+                (pos) => {
+                    userLat = pos.coords.latitude;
+                    userLng = pos.coords.longitude;
+
+                    if (!userMarker) {
+                        userMarker = L.marker([userLat, userLng], { icon: iconUser }).addTo(map);
+                    } else {
+                        userMarker.setLatLng([userLat, userLng]);
+                    }
+
+                    if (atual < locais.length) {
+                        const destino = locais[atual];
+                        const dist = getDistance(userLat, userLng, destino.lat, destino.lng);
+
+                        distanciaAtualEl.textContent = `Distância: ${(dist/1000).toFixed(2)} km`;
+
+                        if (dist < 80) {
+                            markers[atual].setIcon(iconConcluido);
+                            markers[atual].bindPopup(`<b>${destino.nome}</b><br>✔️ Concluído`).openPopup();
+                            
+                            concluidos.push(destino);
+                            atual++;
+                            atualizarDestino();
+                            atualizarProgresso();
+
+                            gsap.fromTo(statusBox, { scale: 1 }, { 
+                                scale: 1.08, 
+                                duration: 0.3, 
+                                yoyo: true, 
+                                repeat: 1 
+                            });
+
+                            if (currentRoute) {
+                                calcularRotaProximoPonto();
+                            }
+                        }
+                    }
+                },
+                (error) => {
+                    console.warn("Erro no rastreamento:", error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 30000
+                }
+            );
+        }
+
+        // ------------------------------
+        // INICIALIZAÇÃO - COM ROTA COMPLETA COMO PADRÃO
+        // ------------------------------
+        
+        // Inicializar geolocalização E calcular rota completa automaticamente
+        initGeolocation();
+        atualizarDestino();
+        atualizarProgresso();
+
+        // NOVO: Mostrar mensagem de que a rota está sendo calculada
+        setTimeout(() => {
+            if (!isRouteActive) {
+                loadingIndicator.style.display = 'block';
+                loadingIndicator.textContent = "Calculando rota completa...";
+            }
+        }, 500);
+
+        // Debug: Mostrar coordenadas no console
+        console.log("Pontos turísticos carregados:");
+        locais.forEach((local, index) => {
+            console.log(`${index + 1}. ${local.nome}: ${local.lat}, ${local.lng}`);
+        });
+    </script>
+</body>
+</html>
